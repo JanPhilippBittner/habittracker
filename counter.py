@@ -1,14 +1,12 @@
 from datetime import date, datetime, timedelta
 import sqlite3
-#from db import get_last_completion_date, db_increment_streak, get_habit_names, db_add_streak, db_add_habit, db_delete_habit, db_increment_streak, check_streak_exists, db_end_streak
-
 import db
 
 
 class Habit:
     
     def __init__(self, name : str, description = "", frequency = 'daily'):
-        ## Defines the main Object - a habit.##
+        # Defines a habit.
         self.name = name
         self.description = description
         self.frequency = frequency.lower()
@@ -41,7 +39,7 @@ class Habit:
         
         
     def check_completed(self , db_connection):
-        ##Checks if the habit was completed in the selected periodicity ###
+        # Checks if the habit was completed in the selected periodicity
         habit_names_frequencies = db.get_habit_names(db_connection)
         habit_names = [row[0] for row in habit_names_frequencies]
         streak_names = db.get_streak_names(db_connection)
@@ -66,25 +64,16 @@ class Habit:
             
             
     def break_streak(self, db_connection):
-        ### This will be invisible to the user, it just checks if a streak is to be broken ###
-        #last_completion_date = get_last_completion_date(db , self.name)
-       # if self.frequency == "daily":
-            #if last_completion_date == datetime.today().date():
         db.db_end_streak(db_connection , self.name)
-        #elif self.frequency == "weekly":
-         #   if last_completion_date.isocalendar()[1] == datetime.today().isocalendar()[1]:
-                #db.db_end_streak(self.name)
-        #else:
-            #pass
         
                 
     def __str__(self):
-        ##Prints the selected habit##
+        # Prints the selected habit
         return f"{self.name},{self.description}"
     
     
 class Database_Habit:
-    # set last_completion_date to datetime.today().date()
+    # Defines a streak
     def __init__(self, name : str, streak_count = 1, start_date = datetime.today().date() , last_completion_date = datetime.today().date(), end_date = None):
         self.name = name
         self.streak_count = streak_count
@@ -94,11 +83,12 @@ class Database_Habit:
         
         
     def store_streak(self,db_connection):
+        # Stores a streak to the database
         db.db_add_streak(db_connection, self.name , self.streak_count, self.start_date, self.last_completion_date, self.end_date)
 
         
-    #make lower case if necessary
     def store_habit(self, db_connection, Habit):
+        # Stores a habit to the database
         if db.db_add_habit(db_connection , Habit.name, Habit.description, Habit.frequency):
             print("Habit successfully created!")
         else:
@@ -107,7 +97,9 @@ class Database_Habit:
         
     
     def delete_habit(self, db_connection):
+        # Deletes a Habit from the database
         db.db_delete_habit(db_connection, self.name)
         
     def increment_streak(self, db_connection):
+        # Increments a streak
         db.db_increment_streak(db_connection, self.name)
