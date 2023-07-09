@@ -4,8 +4,6 @@ It allows users to create and track habits over time. Furthermore the App keeps 
 Data is stored locally in a SQL database.
 Modules include SQLite3, Click, Questionary, Pandas, datetime.
 The code follows either Object Oriented or Functional Programming Paradigms.
-## What is it?
-The
 
 ## Installation
 To install the application open a command line interface of your choice and navigate to the location of the application. Then type:
