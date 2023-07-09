@@ -6,9 +6,14 @@ pd.set_option('display.width' , 1000);
 
 # Queries the total amount of habits
 def amount_of_habits(db_connection):
+    """
+    Queries the total amount of habits present in the habits table
+    :param db_connection: an initialized sqlite3 database connection
+    :return: A string message followed by the amount of of habits
+    """
     cur = db_connection.cursor()
     cur.execute("""
-                SELECT COUNT(*) AS Amount_of_habits
+                SELECT COUNT(*) AS 'Amount of habits'
                 FROM habits
                 """)
     results = cur.fetchall()
@@ -18,6 +23,11 @@ def amount_of_habits(db_connection):
 
 # Queries and displays all habits
 def get_all_habits(db_connection):
+    """
+    Queries all habits existing in the habits table and returns them in tabular form
+    :param db_connection: an initialized sqlite3 database connection
+    :return: A printed DataFrame of all habits existing in the habits table
+    """
     cur = db_connection.cursor()               
     cur.execute("""
                 SELECT habits.name AS 'Habit name', description AS 'Habit description', frequency AS 'Habit frequency', creation_date AS 'Habit creation date', streak_count AS 'Current streak length', last_completion_date AS 'Last completion date'
@@ -33,9 +43,14 @@ def get_all_habits(db_connection):
     
 # Queries and displays daily habits
 def get_daily_habits(db_connection):
+    """
+    Queries all daily habits existing in the habits table and returns them in tabular form
+    :param db_connection: an initialized sqlite3 database connection
+    :return: A printed DataFrame of all daily habits existing in the habits table
+    """
     cur = db_connection.cursor()
     cur.execute("""
-                SELECT habits.name, description, frequency, creation_date
+                SELECT habits.name AS 'Habit name', description AS 'Habit description', frequency AS 'Habit frequency', creation_date AS 'Habit creation date'
                 FROM habits
                 WHERE frequency='daily'
                 """)
@@ -46,9 +61,14 @@ def get_daily_habits(db_connection):
     
 # Queries and displays weekly habits
 def get_weekly_habits(db_connection):
+    """
+    Queries all weekly habits existing in the habits table and returns them in tabular form
+    :param db_connection: an initialized sqlite3 database connection
+    :return: A printed DataFrame of all weekly habits existing in the habits table
+    """
     cur = db_connection.cursor()
     cur.execute("""
-                SELECT habits.name, description, frequency, creation_date
+                SELECT habits.name AS 'Habit name', description AS 'Habit description', frequency AS 'Habit frequency', creation_date AS 'Habit creation date'
                 FROM habits 
                 WHERE frequency='weekly'
                 """)
@@ -59,9 +79,14 @@ def get_weekly_habits(db_connection):
     
 # Queries and displays longest streak
 def get_longest_streak(db_connection):
+    """
+    Queries the longest streak and returns it in tabular form
+    :param db_connection: an initialized sqlite3 database connection
+    :return: A printed DataFrame of the longest streak
+    """
     cur = db_connection.cursor()
     cur.execute("""
-                SELECT habits.name, description, frequency, start_date, streak_count
+                SELECT habits.name AS 'Habit name', description AS 'Habit description', frequency AS 'Habit frequency', start_date AS 'Streak start', streak_count AS 'Streak length'
                 from habits
                 JOIN streaks ON habits.name = streaks.name
                 ORDER BY streak_count DESC
@@ -74,9 +99,14 @@ def get_longest_streak(db_connection):
     
 # Queries longest streak of one habit
 def get_longest_streak_habit(db_connection):
+    """
+    Queries the longest streak of each habit and returns them in tabular form
+    :param db_connection: an initialized sqlite3 database connection
+    :return: A printed DataFrame of the longet streak of each habit
+    """
     cur = db_connection.cursor()
     cur.execute("""
-                SELECT streaks.name, streak_count, start_date, end_date, last_completion_date
+                SELECT streaks.name AS 'Habit name', streak_count AS 'Streak length', start_date AS 'Streak start date', end_date AS 'Streak end date', last_completion_date AS 'Streak last completion date'
                 FROM streaks
                 JOIN habits ON streaks.name = habits.name
                 """)
@@ -99,9 +129,14 @@ def get_longest_streak_habit(db_connection):
     
 # Queries the habit with the lowest average of streaks
 def get_lowest_avg_streak(db_connection):
+    """
+    Queries the habit with the lowest average streak and returns it in tabular form
+    :param db_connection: an initialized sqlite3 database connection
+    :return: A printed DataFrame of the habit with lowest average streaks
+    """
     cur = db_connection.cursor()
     cur.execute("""
-                SELECT habits.name, AVG(streaks.streak_count) AS streak
+                SELECT habits.name AS 'Habit name', AVG(streaks.streak_count) AS 'streak'
                 FROM habits
                 JOIN streaks ON habits.name = streaks.name
                 GROUP BY habits.name
@@ -113,12 +148,17 @@ def get_lowest_avg_streak(db_connection):
     df = pd.DataFrame(rows, columns=columns)
     print(df)
 
-# Queries the daily habits completed today
+
 def get_daily_completed_habits(db_connection):
+    """
+    Queries the daily habits completed today and returns them in tabular form
+    :param db_connection: an initialized sqlite3 database connection
+    :return: A printed DataFrame of all daily habits completed today
+    """
     cur = db_connection.cursor()
     today = datetime.today().date()
     cur.execute("""
-                SELECT habits.name, description, streak_count
+                SELECT habits.name AS 'Habit name', description AS 'Habit description', streak_count AS 'Streak length'
                 FROM habits
                 JOIN streaks ON habits.name = streaks.name
                 WHERE last_completion_date = ? AND frequency = 'daily'
@@ -129,14 +169,19 @@ def get_daily_completed_habits(db_connection):
     print(df)
     
     
-# Queries the weekly habits completed this week
+
 def get_weekly_completed_habits(db_connection):
+    """
+    Queries the weekly habits completed this week and returns them in tabular form
+    :param db_connection: an initialized sqlite3 database connection
+    :return: A printed DataFrame of the weekly habits completed this week
+    """
     cur = db_connection.cursor()
     this_week = datetime.today().isocalendar()[:2]
     start_date = date.fromisocalendar(this_week[0], this_week[1], 1)
     end_date = date.fromisocalendar(this_week[0], this_week[1], 7)
     cur.execute("""
-                SELECT habits.name, description, streak_count
+                SELECT habits.name AS 'Habit name', description AS 'Habit description', streak_count AS 'Streak length'
                 FROM habits
                 JOIN streaks ON habits.name = streaks.name
                 WHERE last_completion_date BETWEEN ? AND ? AND frequency = 'weekly'
@@ -146,8 +191,13 @@ def get_weekly_completed_habits(db_connection):
     df = pd.DataFrame(rows, columns=columns)
     print(df)
           
-# Queries all daily streaks not fulfilled yesterday
+# 
 def get_daily_broken_streaks(db_connection):
+    """
+    Queries all daily streaks not completed yesterday or today and returns them in a list
+    :param db_connection: an initialized sqlite3 database connection
+    :return: A list of daily streaks not completed yesterday or today
+    """
     cur = db_connection.cursor()
     today = datetime.today().date()
     yesterday = today - timedelta(days=1)
@@ -163,6 +213,11 @@ def get_daily_broken_streaks(db_connection):
           
 # Queries all weekly streaks not fulfilled yesterday          
 def get_weekly_broken_streaks(db_connection):
+    """
+    Queries all weekly streaks not completed yesterday or today and returns them in a list
+    :param db_connection: an initialized sqlite3 database connection
+    :return: A list of weekly streaks not completed yesterday or today
+    """
     cur = db_connection.cursor()
     #today = datetime.today().date()
     #this_week_start = today - timedelta(days=today.weekday())  
@@ -182,11 +237,17 @@ def get_weekly_broken_streaks(db_connection):
     return weekly_broken_streaks
 
 
-# Queries longest streak for a certain habit
+# 
 def get_longest_streak_giv_habit(db_connection, name):
+    """
+    Queries longest streak for a certain habit and returms them in tabular form
+    :param db_connection: an initialized sqlite3 database connection
+    :param name: a name of an existing habit object
+    :return: A printed DataFrame of the longest streak for a given habit
+    """
     cur = db_connection.cursor()
     cur.execute("""
-                SELECT name, streak_count, start_date, last_completion_date
+                SELECT name AS 'Habit name', streak_count AS 'Streak length', start_date AS 'Start date', last_completion_date AS 'Last completion date'
                 FROM streaks
                 WHERE name = ?
                 ORDER BY streak_count DESC
