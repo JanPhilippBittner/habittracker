@@ -27,7 +27,7 @@ def cli():
     
    
    
-    # Main Menu loop
+    # Main menu loop
     stop = False
     while not stop:
         choice = questionary.select("You have the following options:",
@@ -44,9 +44,7 @@ def cli():
             print(f"Habit name: {habit.name} \nHabit description: {habit.description} \nHabit frequency: {habit.frequency}")
             
         elif choice == "Mark habit as completed":
-            #name = questionary.text("What is the name of the Habit that you completed?").ask()
             list_of_names = db.get_habit_names(db_connection)
-            #name_options = [x for x in list_of_names]
             name_options = [row[0] for row in list_of_names] + ["-- Back to main menu --"]
             name = questionary.select("Which habit do you want to complete?" , choices = name_options).ask()
             if name == "-- Back to main menu --":
@@ -54,11 +52,9 @@ def cli():
             else:
                 chosen_frequency = next(row[1] for row in list_of_names if row[0]==name)
                 habit = Habit(name = name , frequency = chosen_frequency)
-                #remove self.name if necessary
                 habit.mark_completed(db_connection)
             
         elif choice == "Check if a habit has already been completed":
-            #name = questionary.text("What is the name of the Habit you want to check for?").ask()
             list_of_names = db.get_habit_names(db_connection)
             name_options = [row[0] for row in list_of_names] + ["-- Back to main menu --"]
             name = questionary.select("What is the name of the Habit you want to check?" , choices = name_options).ask()
@@ -84,6 +80,7 @@ def cli():
             pass
         
         elif choice == "Analyze your habits":
+            # Analytics loop
             halt = False
             while not halt:
                 analyze_choice = questionary.select("You have the following options:",
