@@ -1,5 +1,3 @@
 questionary
-sqlite3
-datetime
 pytest
 pandas
