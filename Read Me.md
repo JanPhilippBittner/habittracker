@@ -25,4 +25,4 @@ To test the application open a command line interface of your choice and type:
 pytest .
 ```
 
-The command line shout now return a green message indicating that the tests have passed.
+The command line should now return a green message indicating that the tests have passed.
