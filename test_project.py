@@ -72,27 +72,50 @@ class Test_DB_Habit(unittest.TestCase):
     
     def test_DB_Habit(self):
       #  db_connection = db.create_db("test_db.db")
-        today_date = str(datetime.today().date())
+        today_string = str(datetime.today().date())
         
-        db_habit = Database_Habit("test db habit")
+        db_habit = Database_Habit("Test habit")
         habit = Habit("Test habit" , "Another Test Habit" , "weekly" )
-        assert db_habit.name == "test db habit"
+        assert db_habit.name == "Test habit"
         assert db_habit.start_date == date.today()
         assert db_habit.last_completion_date == datetime.today().date()
         assert db_habit.end_date is None
         
         cur = self.db_connection.cursor()
+        
         db_habit.store_streak(self.db_connection)
         cur.execute("""SELECT *
                         FROM streaks
                         WHERE name = ?""", (db_habit.name,))
         result = cur.fetchone()
-        expected_result = (1 , 'test db habit' ,1 ,today_date ,today_date , None )
+        expected_result = (1 , 'Test habit' ,1 ,today_string ,today_string , None )
         self.assertEqual(result, expected_result)
         
         db_habit.store_habit(self.db_connection, habit)
-        db_habit.delete_habit(self.db_connection)
+        cur.execute("""SELECT *
+                        FROM habits
+                        WHERE name = ?""", (habit.name,))
+        result_1 = cur.fetchone()
+        expected_result_1 = ('Test habit' ,"Another Test Habit" , 'weekly' , today_string )
+        self.assertEqual(result_1, expected_result_1)
+        
         db_habit.increment_streak(self.db_connection)
+        cur.execute("""SELECT name, streak_count
+                        FROM streaks
+                        WHERE name = ?""", (db_habit.name,))
+        result_2 = cur.fetchone()
+        expected_result_2 = ('Test habit' ,2)
+        self.assertEqual(result_2, expected_result_2)
+        
+        db_habit.delete_habit(self.db_connection)
+        cur.execute("""SELECT *
+                        FROM habits
+                        WHERE name = ?""", (habit.name,))
+        result_3 = cur.fetchone()
+        expected_result_3 = None
+        self.assertEqual(result_3, expected_result_3)
+        
+        
  
       #  db_connection.close()
         
