@@ -93,11 +93,16 @@ class TestAnalytics(unittest.TestCase):
     def setUpClass(cls):
         cls.db_connection = db.create_db("test_db.db")
         cls.habit = Habit("Test habit" , "Another Test Habit" , "weekly")
+        cls.habit_1 = Habit("Test habit 1" , "Another Test Habit" , "daily")
         cls.name = cls.habit.name
         cls.today = datetime.today().date()
         cls.db_habit = Database_Habit(cls.habit.name)
+        cls.db_habit_1 = Database_Habit(cls.habit_1.name)
         cls.db_habit.store_habit(cls.db_connection, cls.habit)
+        cls.db_habit_1.store_habit(cls.db_connection, cls.habit_1)
         cls.db_habit.store_streak(cls.db_connection)
+        cls.db_habit_1.store_streak(cls.db_connection)
+        cls.db_habit.increment_streak(cls.db_connection)
     @classmethod    
     def tearDownClass(cls):
         cls.db_connection.close()   
@@ -108,7 +113,7 @@ class TestAnalytics(unittest.TestCase):
     def test_get_all_habits(self):
         analytics.get_all_habits(self.db_connection)
         today_string = str(datetime.today().date())
-        rows = [('Test habit', 'Another Test Habit', 'weekly', today_string , 1, today_string)]
+        rows = [('Test habit', 'Another Test Habit', 'weekly', today_string , 2, today_string) , ('Test habit 1' , 'Another Test Habit' , 'daily' , today_string , 1 , today_string)]
         columns = ['Habit name' , 'Habit description' , 'Habit frequency' , 'Habit creation date' , 'Current streak length' , 'Last completion date']
         expected_result = pd.DataFrame(rows, columns=columns)
         
@@ -119,7 +124,8 @@ class TestAnalytics(unittest.TestCase):
  
     def test_get_daily_habits(self):
         analytics.get_daily_habits(self.db_connection)
-        rows = []
+        today_string = str(datetime.today().date())
+        rows = [('Test habit 1' , 'Another Test Habit' , 'daily' , today_string)]
         columns = ['Habit name', 'Habit description', 'Habit frequency', 'Habit creation date']
         expected_result = pd.DataFrame(rows, columns=columns)
         
@@ -141,7 +147,7 @@ class TestAnalytics(unittest.TestCase):
     def test_get_longest_streak(self):
         analytics.get_longest_streak(self.db_connection)
         today_string = str(datetime.today().date())
-        rows = [('Test habit', 'Another Test Habit', 'weekly', today_string, 1)]
+        rows = [('Test habit', 'Another Test Habit', 'weekly', today_string, 2)]
         columns = ['Habit name',  'Habit description', 'Habit frequency' , 'Streak start', 'Streak length']
         expected_result = pd.DataFrame(rows, columns=columns)
         
@@ -152,23 +158,28 @@ class TestAnalytics(unittest.TestCase):
     def test_get_longest_streak_habit(self):
 
         today_string = str(datetime.today().date())
-        rows = [('Test habit' , 1 , today_string , None, today_string)]
+        rows = [('Test habit' , 2 , today_string , None, today_string) , ('Test habit 1' , 1 , today_string , None , today_string)]
         columns = ['Habit name', 'Streak length', 'Streak start date', 'Streak end date', 'Streak last completion date']
         expected_result = pd.DataFrame(rows, columns=columns)
         actual_result = analytics.get_longest_streak_habit(self.db_connection)
         pd_testing.assert_frame_equal(actual_result , expected_result)  
         
     def test_get_lowest_avg_streak(self):
-        today_string = str(datetime.today().date())
-        rows = [('Test habit' , 1.0)]
+
+        rows = [('Test habit 1' , 1.0)]
         columns = ['Habit name', 'streak']
         expected_result = pd.DataFrame(rows, columns=columns)
         actual_result = analytics.get_lowest_avg_streak(self.db_connection)
         pd_testing.assert_frame_equal(actual_result , expected_result)  
         
-    def test_get_daily_completed_habits(self):
-        #db_connection = db.create_db("test_db.db")
-        analytics.get_daily_completed_habits(self.db_connection)
+    #def test_get_daily_completed_habits(self):
+        #today_string = str(datetime.today().date())
+        #rows = [('Test habit' , 'Another Test Habit' , 1)]
+        #columns = ['Habit name', 'Habit description' ,'Streak length']
+        #expected_result = pd.DataFrame(rows, columns=columns)
+        #actual_result = analytics.get_daily_completed_habits(self.db_connection)
+        #pd_testing.assert_frame_equal(actual_result , expected_result) 
+
     def test_get_weekly_completed_habits(self):
         #db_connection = db.create_db("test_db.db")
         analytics.get_weekly_completed_habits(self.db_connection)
