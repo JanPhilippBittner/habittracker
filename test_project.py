@@ -72,6 +72,7 @@ class Test_DB_Habit(unittest.TestCase):
     
     def test_DB_Habit(self):
       #  db_connection = db.create_db("test_db.db")
+        today_date = str(datetime.today().date())
         
         db_habit = Database_Habit("test db habit")
         habit = Habit("Test habit" , "Another Test Habit" , "weekly" )
@@ -80,7 +81,15 @@ class Test_DB_Habit(unittest.TestCase):
         assert db_habit.last_completion_date == datetime.today().date()
         assert db_habit.end_date is None
         
+        cur = self.db_connection.cursor()
         db_habit.store_streak(self.db_connection)
+        cur.execute("""SELECT *
+                        FROM streaks
+                        WHERE name = ?""", (db_habit.name,))
+        result = cur.fetchone()
+        expected_result = (1 , 'test db habit' ,1 ,today_date ,today_date , None )
+        self.assertEqual(result, expected_result)
+        
         db_habit.store_habit(self.db_connection, habit)
         db_habit.delete_habit(self.db_connection)
         db_habit.increment_streak(self.db_connection)
@@ -172,26 +181,31 @@ class TestAnalytics(unittest.TestCase):
         actual_result = analytics.get_lowest_avg_streak(self.db_connection)
         pd_testing.assert_frame_equal(actual_result , expected_result)  
         
-    #def test_get_daily_completed_habits(self):
-        #today_string = str(datetime.today().date())
-        #rows = [('Test habit' , 'Another Test Habit' , 1)]
-        #columns = ['Habit name', 'Habit description' ,'Streak length']
-        #expected_result = pd.DataFrame(rows, columns=columns)
-        #actual_result = analytics.get_daily_completed_habits(self.db_connection)
-        #pd_testing.assert_frame_equal(actual_result , expected_result) 
+    def test_get_daily_completed_habits(self):
+
+        rows = [('Test habit 1' , 'Another Test Habit' , 1)]
+        columns = ['Habit name', 'Habit description' ,'Streak length']
+        expected_result = pd.DataFrame(rows, columns=columns)
+        actual_result = analytics.get_daily_completed_habits(self.db_connection)
+        pd_testing.assert_frame_equal(actual_result , expected_result) 
 
     def test_get_weekly_completed_habits(self):
-        #db_connection = db.create_db("test_db.db")
-        analytics.get_weekly_completed_habits(self.db_connection)
-    def test_get_daily_broken_streaks(self):
-        #db_connection = db.create_db("test_db.db")
-        analytics.get_daily_broken_streaks(self.db_connection)
-    def test_get_weekly_broken_streaks(self):
-        #db_connection = db.create_db("test_db.db")
-        analytics.get_weekly_broken_streaks(self.db_connection)
+
+        rows = [('Test habit' , 'Another Test Habit' , 2)]
+        columns = ['Habit name', 'Habit description', 'Streak length']
+        expected_result = pd.DataFrame(rows, columns=columns)
+        actual_result = analytics.get_weekly_completed_habits(self.db_connection)
+        pd_testing.assert_frame_equal(actual_result , expected_result)  
+        
     def test_get_longest_streak_giv_habit(self):
-        #db_connection = db.create_db("test_db.db")
-        analytics.get_longest_streak_giv_habit(self.db_connection , self.name)
+        
+        today_string = str(datetime.today().date())
+        rows = [('Test habit' , 2 , today_string , today_string)]
+        columns = ['Habit name', 'Streak length', 'Start date', 'Last completion date']
+        expected_result = pd.DataFrame(rows, columns=columns)
+        actual_result = analytics.get_longest_streak_giv_habit(self.db_connection , self.habit.name)
+        pd_testing.assert_frame_equal(actual_result , expected_result)  
+        
         
          
     
