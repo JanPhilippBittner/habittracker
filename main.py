@@ -31,7 +31,7 @@ def cli():
     stop = False
     while not stop:
         choice = questionary.select("You have the following options:",
-                           choices=["Create habit" , "Mark habit as completed", "Check if a habit has already been completed", "Delete a habit", "Test the application", "Analyze your habits" , "-- Exit --"]
+                           choices=["Create habit" , "Mark habit as completed", "Check if a habit has already been completed", "Delete a habit", "Analyze your habits" , "-- Exit --"]
                           ).ask()
 
         if choice == "Create habit":
@@ -75,10 +75,7 @@ def cli():
                 db_habit = Database_Habit(name)
                 db_habit.delete_habit(db_connection) 
                 print("You deleted " + db_habit.name)
-            
-        elif choice == "Test the application":
-            pass
-        
+
         elif choice == "Analyze your habits":
             # Analytics loop
             halt = False
@@ -87,21 +84,21 @@ def cli():
                                    choices=["Show all active habits" , "Show daily habits" , "Show weekly habits" , "Show longest streak" , "Show longest streak of each habit" , "Show habit with lowest average streaks" , "Show daily habits completed today" , "Show weekly habits completed this week" , "Show longest streak for chosen habit" ,"-- Back to main menu --"]
                                   ).ask()
                 if analyze_choice == "Show all active habits":
-                    analytics.get_all_habits(db_connection)
+                    print(analytics.get_all_habits(db_connection))
                 elif analyze_choice == "Show daily habits":
-                    analytics.get_daily_habits(db_connection)
+                    print(analytics.get_daily_habits(db_connection))
                 elif analyze_choice == "Show weekly habits":
-                    analytics.get_weekly_habits(db_connection)
+                    print(analytics.get_weekly_habits(db_connection))
                 elif analyze_choice == "Show longest streak":
-                    analytics.get_longest_streak(db_connection)
+                    print(analytics.get_longest_streak(db_connection))
                 elif analyze_choice == "Show longest streak of each habit":
-                    analytics.get_longest_streak_habit(db_connection)
+                    print(analytics.get_longest_streak_habit(db_connection))
                 elif analyze_choice == "Show habit with lowest average streaks":
-                    analytics.get_lowest_avg_streak(db_connection)
+                    print(analytics.get_lowest_avg_streak(db_connection))
                 elif analyze_choice == "Show daily habits completed today":
-                    analytics.get_daily_completed_habits(db_connection)
+                    print(analytics.get_daily_completed_habits(db_connection))
                 elif analyze_choice == "Show weekly habits completed this week":
-                    analytics.get_weekly_completed_habits(db_connection)
+                    print(analytics.get_weekly_completed_habits(db_connection))
                 elif analyze_choice == "Show longest streak for chosen habit":
                     list_of_names = db.get_habit_names(db_connection)
                     list_of_streaks = db.get_streak_names(db_connection)
@@ -113,7 +110,7 @@ def cli():
                         pass
                     else:
                         habit = Habit(name)
-                        analytics.get_longest_streak_giv_habit(db_connection, habit.name)
+                        print(analytics.get_longest_streak_giv_habit(db_connection, habit.name))
                 elif analyze_choice == "-- Back to main menu --":
                     halt = True
                 else:
