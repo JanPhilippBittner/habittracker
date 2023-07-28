@@ -4,22 +4,6 @@ pd.set_option('display.max_rows', 1000);
 pd.set_option('display.max_columns', 1000);
 pd.set_option('display.width' , 1000);
 
-# Queries the total amount of habits
-def amount_of_habits(db_connection):
-    """
-    Queries the total amount of habits present in the habits table
-    :param db_connection: an initialized sqlite3 database connection
-    :return: A string message followed by the amount of of habits
-    """
-    cur = db_connection.cursor()
-    cur.execute("""
-                SELECT COUNT(*) AS 'Amount of habits'
-                FROM habits
-                """)
-    results = cur.fetchall()
-    print("You are currently tracking this many habits: " , results)
-    
-
 
 # Queries and displays all habits
 def get_all_habits(db_connection):
@@ -38,7 +22,7 @@ def get_all_habits(db_connection):
     rows = cur.fetchall()
     columns = [description[0] for description in cur.description]
     df = pd.DataFrame(rows, columns=columns)
-    print(df)
+    return df
     
     
 # Queries and displays daily habits
@@ -57,7 +41,7 @@ def get_daily_habits(db_connection):
     rows = cur.fetchall()
     columns = [description[0] for description in cur.description]
     df = pd.DataFrame(rows, columns = columns)
-    print(df)
+    return df
     
 # Queries and displays weekly habits
 def get_weekly_habits(db_connection):
@@ -75,7 +59,7 @@ def get_weekly_habits(db_connection):
     rows = cur.fetchall()
     columns = [description[0] for description in cur.description]
     df = pd.DataFrame(rows , columns=columns)
-    print(df)
+    return df
     
 # Queries and displays longest streak
 def get_longest_streak(db_connection):
@@ -95,7 +79,7 @@ def get_longest_streak(db_connection):
     rows = cur.fetchall()
     columns = [description[0] for description in cur.description]
     df = pd.DataFrame(rows , columns=columns)
-    print(df)
+    return df
     
 # Queries longest streak of one habit
 def get_longest_streak_habit(db_connection):
@@ -119,14 +103,9 @@ def get_longest_streak_habit(db_connection):
         if name not in result_dict or streak > result_dict[name][1]:
             result_dict[name] = result_item
     df = pd.DataFrame(result_dict.values(), columns=[description[0] for description in cur.description])
-                      #['Name', 'Streak Count', 'Start Date', 'End Date', 'Last Completion Date'])
-    print(df)
+    return df
     
-    
-    #columns = [description[0] for description in cur.description]
-    #df = pd.DataFrame(rows , columns=columns)
-    #print(df)
-    
+
 # Queries the habit with the lowest average of streaks
 def get_lowest_avg_streak(db_connection):
     """
@@ -146,9 +125,9 @@ def get_lowest_avg_streak(db_connection):
     rows = cur.fetchall()
     columns = [description[0] for description in cur.description]
     df = pd.DataFrame(rows, columns=columns)
-    print(df)
+    return df
 
-
+# Queries the daily habits completed today
 def get_daily_completed_habits(db_connection):
     """
     Queries the daily habits completed today and returns them in tabular form
@@ -166,7 +145,7 @@ def get_daily_completed_habits(db_connection):
     rows = cur.fetchall()
     columns = [description[0] for description in cur.description]
     df = pd.DataFrame(rows , columns=columns)
-    print(df)
+    return df
     
     
 
@@ -189,9 +168,9 @@ def get_weekly_completed_habits(db_connection):
     rows = cur.fetchall()
     columns = [description[0] for description in cur.description]
     df = pd.DataFrame(rows, columns=columns)
-    print(df)
+    return df
           
-# 
+# Queries daily broken streaks. This is a support function and not meant for user analytics. 
 def get_daily_broken_streaks(db_connection):
     """
     Queries all daily streaks not completed yesterday or today and returns them in a list
@@ -211,12 +190,12 @@ def get_daily_broken_streaks(db_connection):
     daily_broken_streaks = [row[0] for row in result]
     return daily_broken_streaks
           
-# Queries all weekly streaks not fulfilled yesterday          
+# Queries weekly broken streaks. This is a support function and not meant for user analytics.          
 def get_weekly_broken_streaks(db_connection):
     """
     Queries all weekly streaks not completed yesterday or today and returns them in a list
     :param db_connection: an initialized sqlite3 database connection
-    :return: A list of weekly streaks not completed yesterday or today
+    :return: A list of weekly streaks not completed last week and this week
     """
     cur = db_connection.cursor()
     #today = datetime.today().date()
@@ -237,7 +216,7 @@ def get_weekly_broken_streaks(db_connection):
     return weekly_broken_streaks
 
 
-# 
+# Queries longest streak of a given habit
 def get_longest_streak_giv_habit(db_connection, name):
     """
     Queries longest streak for a certain habit and returms them in tabular form
@@ -256,4 +235,4 @@ def get_longest_streak_giv_habit(db_connection, name):
     rows = cur.fetchall()
     columns = [description[0] for description in cur.description]
     df = pd.DataFrame(rows, columns=columns)
-    print(df)
+    return df
