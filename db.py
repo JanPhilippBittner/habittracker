@@ -72,6 +72,7 @@ def db_delete_habit(db_connection, name):
     
 
 def db_increment_streak(db_connection, name):
+    # Increments a streak
     cur = db_connection.cursor()
     today = datetime.today().date()
     cur.execute("""
@@ -83,6 +84,7 @@ def db_increment_streak(db_connection, name):
     
     
 def db_end_streak(db_connection, name):
+    # ends a streak
     cur = db_connection.cursor()
     ending_date = datetime.today().date()
     cur.execute("""
