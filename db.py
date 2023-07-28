@@ -7,7 +7,7 @@ def create_db(name = "habittracker.db"):
     return db_connection
 
 def create_table(db_connection):
-    ### Creates table to store habits and a table to store the tracking data of habits ###
+    # Creates table to store habits and a table to store the tracking data of habits
     cur = db_connection.cursor()
     cur.execute("""
                 CREATE TABLE IF NOT EXISTS habits(
@@ -32,7 +32,7 @@ def create_table(db_connection):
     db_connection.commit()
 
     
-### The following functions manage storage of habits in database ###    
+# The following functions manage storage of habits/streaks in the database
     
 def db_add_habit(db_connection, name, description, frequency):
     # Inserts new entry into the habits table
@@ -95,29 +95,29 @@ def db_end_streak(db_connection, name):
     
 # The following functions support other functions    
 def get_last_completion_date(db_connection, name):
+    # Retrieves the last completion date for the current streak of a given habit
                 cur = db_connection.cursor()
                 cur.execute("""
                     SELECT last_completion_date
                     FROM streaks
                     WHERE name = ? AND end_date IS NULL""" , (name,))
                 result = cur.fetchone()
-                # old code -------return result[0].date() if result else None
                 return datetime.strptime(result[0], "%Y-%m-%d").date() if result and result[0] else None
                 
-# Retrieves name and frequency of all habits                
+                
 def get_habit_names(db_connection):
+    # Retrieves name and frequency of all habits
                 cur = db_connection.cursor()
                 cur.execute("""
                             SELECT name, frequency
                             FROM habits
                             """)
                 result = cur.fetchall()
-                #habit_names = [row[0] for row in result]
-                #return habit_names
                 return result
 
-# Retrieves habit names of all streaks            
+            
 def get_streak_names(db_connection):
+    # Retrieves habit names of all streaks  
                 cur = db_connection.cursor()
                 cur.execute("""
                             SELECT name
@@ -126,16 +126,7 @@ def get_streak_names(db_connection):
                 result = cur.fetchall()
                 list_result = [row[0] for row in result]
                 return list_result
-                                    
-def get_streak_names(db_connection):
-                cur = db_connection.cursor()
-                cur.execute("""
-                            SELECT name
-                            FROM streaks
-                            """)
-                result = cur.fetchall()
-                streak_names_result = [row[0] for row in result]
-                return streak_names_result
+    
             
             
 def check_streak_exists(db_connection, name):
