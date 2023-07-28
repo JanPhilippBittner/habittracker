@@ -15,6 +15,7 @@ class Habit:
 
         
     def mark_completed(self, db_connection):
+        # Marks a habit as complete if it exists or the habit was not already marked as complete for the respective periodicity
         last_completion_date = db.get_last_completion_date(db_connection , self.name)
         streak_exists = db.check_streak_exists(db_connection, self.name)
         
