@@ -10,7 +10,6 @@ class Habit:
         self.name = name
         self.description = description
         self.frequency = frequency.lower()
-        assert frequency.lower() in ["daily" , "weekly"] , "Invalid frequency. Please use one of the following: 'daily' or 'weekly'"
         self.creation_date = datetime.today().date()
         self.db_habit = Database_Habit(name=self.name)
 
