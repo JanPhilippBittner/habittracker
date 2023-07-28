@@ -22,8 +22,6 @@ class TestCounter(unittest.TestCase):
             os.remove("test_db.db")
     
     def test_Habit(self):
-        #habit_1 = Habit("Test name", "Test description" , "daily" , )
-        #habit_2 = Habit("Test name 1", "Test description" , "weekly" , )
         assert self.habit_1.name == "Test name"
         assert self.habit_1.description == "Test description"
         assert self.habit_1.frequency == "daily"
@@ -31,7 +29,7 @@ class TestCounter(unittest.TestCase):
         assert self.habit_2.name == "Test name 1"
         assert self.habit_2.description == "Test description"
         assert self.habit_2.frequency == "weekly"
-     #   db_connection = db.create_db("test_db.db")
+
     
     def test_mark_completed(self):
         result_date = str(datetime.today().date())
@@ -51,13 +49,13 @@ class TestCounter(unittest.TestCase):
         self.assertEqual(result_2, expected_result_2)
     
            
-        # Assert the expected value of last_completion_date after calling the function.
+
         
     def test_check_completed(self):
         self.habit_1.check_completed(self.db_connection)
     def test_break_streak(self):
         self.habit_1.break_streak(self.db_connection)
-    #    db_connection.close()
+
         
 class Test_DB_Habit(unittest.TestCase):
     db_connection = None
@@ -71,7 +69,6 @@ class Test_DB_Habit(unittest.TestCase):
             os.remove("test_db.db")
     
     def test_DB_Habit(self):
-      #  db_connection = db.create_db("test_db.db")
         today_string = str(datetime.today().date())
         
         db_habit = Database_Habit("Test habit")
@@ -116,8 +113,7 @@ class Test_DB_Habit(unittest.TestCase):
         self.assertEqual(result_3, expected_result_3)
         
         
- 
-      #  db_connection.close()
+
         
 class TestAnalytics(unittest.TestCase):
     db_connection = None
